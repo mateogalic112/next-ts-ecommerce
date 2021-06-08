@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button } from '@material-ui/core';
 
 const useStyles = makeStyles({
-	white: {
+	link: {
 		color: 'white',
 	},
 });
@@ -20,7 +20,7 @@ const NavigationList = () => {
 		<Box component="div" p={1} display="flex">
 			{NavList.map((item) => (
 				<Link key={item.name} href={item.url} passHref>
-					<Button className={classes.white}>{item.name}</Button>
+					<Button className={classes.link}>{item.name}</Button>
 				</Link>
 			))}
 		</Box>

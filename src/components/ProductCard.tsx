@@ -5,19 +5,7 @@ import { Product } from '../../models/Product';
 
 import Rating from '@material-ui/lab/Rating';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-	Grid,
-	Box,
-	Card,
-	CardActionArea,
-	CardActions,
-	CardContent,
-	CardMedia,
-	IconButton,
-	Typography,
-	Tooltip,
-	Button,
-} from '@material-ui/core';
+import { Grid, Card, CardActionArea, CardActions, CardContent, CardMedia, Typography, Button } from '@material-ui/core';
 import { getRating } from '../../helpers/getRatings';
 import theme from '../../theme';
 

@@ -79,7 +79,7 @@ const Header: React.FC = () => {
 							<AnimatedDrawer isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
 						</div>
 						<Link href="/">
-							<a className={classes.title}>Matco</a>
+							<a className={classes.title}>E-commerce</a>
 						</Link>
 						<Hidden smDown>
 							<NavigationList />

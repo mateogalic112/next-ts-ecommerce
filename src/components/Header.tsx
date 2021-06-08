@@ -1,16 +1,19 @@
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 
 import AnimatedDrawer from '../widgets/AnimatedDrawer';
 import SearchBar from '../widgets/SearchBar';
 import NavigationList from './NavigationList';
-import ModalComponent from '../components/ModalComponent';
 
 import theme from '../../theme';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { AppBar, Toolbar, IconButton, Button, Container, TextField, Hidden, Box, Badge } from '@material-ui/core';
+import { AppBar, Toolbar, IconButton, Button, Container, Hidden } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+
+import useUser from '../../hooks/useUser';
+import UserPopover from './UserPopover';
+import Auth from './Auth';
 
 const useStyles = makeStyles({
 	menuButton: {
@@ -22,19 +25,8 @@ const useStyles = makeStyles({
 		},
 	},
 	title: {
-		flexGrow: 1,
 		fontSize: '1.5rem',
-	},
-	form: {
-		display: 'flex',
-		flexDirection: 'column',
-	},
-	field: {
-		margin: theme.spacing(1),
-		width: 300,
-	},
-	loginButton: {
-		margin: theme.spacing(1),
+		marginRight: 'auto',
 	},
 	white: {
 		color: 'white',
@@ -44,9 +36,15 @@ const useStyles = makeStyles({
 const Header: React.FC = () => {
 	const classes = useStyles();
 
-	const [isDrawerOpen, setIsDrawerOpen] = React.useState<boolean>(false);
+	// Auth Modal
 	const [showModal, setShowModal] = React.useState<boolean>(false);
+	const openModal = () => setShowModal(true);
+	const closeModal = () => setShowModal(false);
 
+	const { userData, loading, loggedIn } = useUser();
+
+	// Side drawer
+	const [isDrawerOpen, setIsDrawerOpen] = React.useState<boolean>(false);
 	const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
 		if (
 			event &&
@@ -58,8 +56,6 @@ const Header: React.FC = () => {
 
 		setIsDrawerOpen(open);
 	};
-
-	const openModal = () => setShowModal(true);
 
 	return (
 		<header>
@@ -86,12 +82,19 @@ const Header: React.FC = () => {
 							<SearchBar />
 						</Hidden>
 
-						<Button onClick={openModal} color="inherit">
-							Login
-						</Button>
+						{loggedIn ? (
+							<UserPopover username={userData.user?.username} />
+						) : loading ? (
+							<h3></h3>
+						) : (
+							<Button onClick={openModal} color="inherit">
+								Login
+							</Button>
+						)}
 					</Toolbar>
 				</Container>
 			</AppBar>
+			<Auth open={showModal} closeModal={closeModal} />
 		</header>
 	);
 };

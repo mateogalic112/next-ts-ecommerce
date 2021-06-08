@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import ModalComponent from './ModalComponent';
 
@@ -45,7 +45,13 @@ const Auth: React.FC<AuthProps> = ({ open, closeModal }) => {
 		});
 	};
 
-	const { userData, loading, mutate } = useUser();
+	const { userData, loading, mutate, error } = useUser();
+
+	useEffect(() => {
+		if (!loading) {
+			closeModal();
+		}
+	}, [loading]);
 
 	// Handle login
 	const [loginData, setLoginData] = React.useState({
@@ -61,9 +67,6 @@ const Auth: React.FC<AuthProps> = ({ open, closeModal }) => {
 		e.preventDefault();
 		await loginUser(loginData.email, loginData.password);
 		mutate();
-		if (!loading) {
-			closeModal();
-		}
 	};
 
 	return (

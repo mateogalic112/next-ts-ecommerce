@@ -41,7 +41,7 @@ const Header: React.FC = () => {
 	const openModal = () => setShowModal(true);
 	const closeModal = () => setShowModal(false);
 
-	const { userData, loading, loggedIn } = useUser();
+	const { userData, loading } = useUser();
 
 	// Side drawer
 	const [isDrawerOpen, setIsDrawerOpen] = React.useState<boolean>(false);
@@ -82,7 +82,7 @@ const Header: React.FC = () => {
 							<SearchBar />
 						</Hidden>
 
-						{loggedIn ? (
+						{userData?.user ? (
 							<UserPopover username={userData.user?.username} />
 						) : loading ? (
 							<h3></h3>

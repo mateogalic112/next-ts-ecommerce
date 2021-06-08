@@ -41,7 +41,7 @@ const Header: React.FC = () => {
 	const openModal = () => setShowModal(true);
 	const closeModal = () => setShowModal(false);
 
-	const { userData, loading } = useUser();
+	const { userData } = useUser();
 
 	// Side drawer
 	const [isDrawerOpen, setIsDrawerOpen] = React.useState<boolean>(false);
@@ -84,8 +84,6 @@ const Header: React.FC = () => {
 
 						{userData?.user ? (
 							<UserPopover username={userData.user?.username} />
-						) : loading ? (
-							<h3></h3>
 						) : (
 							<Button onClick={openModal} color="inherit">
 								Login

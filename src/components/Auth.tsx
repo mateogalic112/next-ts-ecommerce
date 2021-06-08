@@ -32,6 +32,8 @@ type AuthProps = {
 const Auth: React.FC<AuthProps> = ({ open, closeModal }) => {
 	const classes = useStyles();
 
+	const [loading, setLoading] = React.useState(false);
+
 	const loginUser = async (email: string, password: string) => {
 		await fetch(`${NEXT_URL}/api/auth/login`, {
 			method: 'POST',
@@ -45,13 +47,13 @@ const Auth: React.FC<AuthProps> = ({ open, closeModal }) => {
 		});
 	};
 
-	const { userData, loading, mutate, error } = useUser();
+	const { userData, mutate, error } = useUser();
 
 	useEffect(() => {
-		if (!loading) {
+		if (!loading || userData?.user) {
 			closeModal();
 		}
-	}, [loading]);
+	}, [userData, loading]);
 
 	// Handle login
 	const [loginData, setLoginData] = React.useState({
@@ -65,13 +67,14 @@ const Auth: React.FC<AuthProps> = ({ open, closeModal }) => {
 
 	const handleLoginDataSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		await loginUser(loginData.email, loginData.password);
+		setLoading(true);
+		await loginUser(loginData.email, loginData.password).then((_) => setLoading(false));
 		mutate();
 	};
 
 	return (
 		<ModalComponent open={open} handleClose={closeModal} title="Login" description="Login to see featured stuff">
-			{loading ? (
+			{loading && !userData?.user ? (
 				<p>Loading</p>
 			) : (
 				<form onSubmit={handleLoginDataSubmit} className={classes.form} noValidate autoComplete="off">

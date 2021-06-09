@@ -25,7 +25,7 @@ const Layout: React.FC<LayoutProps> = ({ title, keywords, description, children 
 };
 
 const defaultProps: LayoutProps = {
-	title: 'Playground',
+	title: 'Ecommerce',
 	description: 'Playground for Next.js and Typescript',
 	keywords: 'next, javascript, typescript, learning, development',
 };

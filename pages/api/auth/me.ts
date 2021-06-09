@@ -1,8 +1,10 @@
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import cookie from 'cookie';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { API_URL } from '../../../config';
+import { User } from '../../../models/User';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === 'GET') {
@@ -15,22 +17,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const { token } = cookie.parse(req.headers.cookie);
 
-		const strapiRes = await fetch(`${API_URL}/users/me`, {
-			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
-
-		const user = await strapiRes.json();
-
-		if (strapiRes.ok) {
-			res.status(200).json({ user });
-		} else {
-			res.status(403).json({
-				message: 'User forbidden!',
+		await axios
+			.get<User | AxiosError>(`${API_URL}/users/me`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			})
+			.then((r: AxiosResponse<any>) => {
+				res.status(r.status).json({ user: r.data });
+			})
+			.catch((err: AxiosError) => {
+				res.status(err.response?.status || 403).json({
+					message: err.response?.data,
+				});
 			});
-		}
 	} else {
 		res.setHeader('Allow', ['GET']);
 		res.status(405).json({ message: `Method ${req.method} not allowed` });

@@ -1,4 +1,9 @@
 import React, { useEffect } from 'react';
+import axios from 'axios';
+import { NEXT_URL } from '../../config';
+
+import useUser from '../../hooks/useUser';
+import { User } from '../../models/User';
 
 import ModalComponent from './ModalComponent';
 
@@ -7,8 +12,6 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import theme from '../../theme';
 import { makeStyles } from '@material-ui/core/styles';
-import useUser from '../../hooks/useUser';
-import { NEXT_URL } from '../../config';
 
 const useStyles = makeStyles({
 	form: {
@@ -34,23 +37,24 @@ const Auth: React.FC<AuthProps> = ({ open, closeModal }) => {
 
 	const [loading, setLoading] = React.useState(false);
 
-	const loginUser = async (email: string, password: string) => {
-		await fetch(`${NEXT_URL}/api/auth/login`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
+	const loginUser = async (email: string, password: string): Promise<User | void> => {
+		return await axios
+			.post(`${NEXT_URL}/api/auth/login`, {
 				identifier: email,
 				password,
-			}),
-		});
+			})
+			.then((response) => {
+				return response.data as User;
+			})
+			.catch((err) => {
+				console.log('req', err);
+			});
 	};
 
-	const { userData, mutate, error } = useUser();
+	const { userData, mutate, isValidating } = useUser();
 
 	useEffect(() => {
-		if (!loading || userData?.user) {
+		if (!loading && userData?.user) {
 			closeModal();
 		}
 	}, [userData, loading]);
@@ -68,13 +72,15 @@ const Auth: React.FC<AuthProps> = ({ open, closeModal }) => {
 	const handleLoginDataSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setLoading(true);
-		await loginUser(loginData.email, loginData.password).then((_) => setLoading(false));
+		await loginUser(loginData.email, loginData.password).then((_) => {
+			setLoading(false);
+		});
 		mutate();
 	};
 
 	return (
 		<ModalComponent open={open} handleClose={closeModal} title="Login" description="Login to see featured stuff">
-			{loading && !userData?.user ? (
+			{loading || isValidating ? (
 				<p>Loading</p>
 			) : (
 				<form onSubmit={handleLoginDataSubmit} className={classes.form} noValidate autoComplete="off">

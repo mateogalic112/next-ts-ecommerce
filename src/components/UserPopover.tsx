@@ -7,6 +7,7 @@ import { Popover, Button, List, ListItem, ListItemText } from '@material-ui/core
 import { ListItemProps } from '@material-ui/core/ListItem';
 import { NEXT_URL } from '../../config';
 import useUser from '../../hooks/useUser';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -35,14 +36,10 @@ const UserPopover: React.FC<UserPopoverProps> = ({ username }) => {
 	const { mutate } = useUser();
 
 	const logoutUser = async () => {
-		const res = await fetch(`${NEXT_URL}/api/auth/logout`, {
-			method: 'POST',
-		});
-
-		if (res.ok) {
+		await axios.post(`${NEXT_URL}/api/auth/logout`).then((_) => {
 			mutate();
 			router.push('/');
-		}
+		});
 	};
 
 	const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);

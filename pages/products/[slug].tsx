@@ -1,17 +1,24 @@
 import React from 'react';
+
 import axios, { AxiosResponse } from 'axios';
 import ImageGallery from 'react-image-gallery';
 
 import Image from 'next/image';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { API_URL } from '../../config';
+
+import { loadStripe } from '@stripe/stripe-js';
+
+import { API_URL, STRIPE_PK } from '../../config';
+import useUser from '../../hooks/useUser';
 
 import { Product } from '../../models/Product';
 
 import Layout from '../../src/components/Layout';
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Box, Button, ButtonBase, Container, Grid, Paper, Typography } from '@material-ui/core';
+import { Button, ButtonBase, Container, Grid, Paper, Typography } from '@material-ui/core';
+
+const stripePromise = loadStripe(STRIPE_PK);
 
 type SingleProductProps = {
 	product: Product;
@@ -42,6 +49,35 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product }) => {
 		original: pic.url,
 		thumbnail: pic.formats?.thumbnail.url,
 	}));
+
+	const { userData } = useUser();
+
+	console.log(product.id);
+
+	const handleBuy = async () => {
+		const stripe = await stripePromise;
+
+		if (!stripe) {
+			throw new Error('¨No stripe');
+		}
+		const response = await axios.post(
+			`${API_URL}/orders`,
+			{
+				product: { id: product.id },
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${userData.jwt}`,
+				},
+			}
+		);
+
+		const session = await response.data;
+
+		await stripe.redirectToCheckout({
+			sessionId: session.id,
+		});
+	};
 
 	return (
 		<Layout title={product.name}>
@@ -74,7 +110,12 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product }) => {
 							<Typography gutterBottom variant="h5">
 								$19.00
 							</Typography>
-							<Button className={classes.button} variant="contained" color="secondary">
+							<Button
+								onClick={handleBuy}
+								className={classes.button}
+								variant="contained"
+								color="secondary"
+							>
 								Buy
 							</Button>
 						</Grid>

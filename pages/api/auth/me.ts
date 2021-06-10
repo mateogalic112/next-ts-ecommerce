@@ -23,8 +23,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 					Authorization: `Bearer ${token}`,
 				},
 			})
-			.then((r: AxiosResponse<any>) => {
-				res.status(r.status).json({ user: r.data });
+			.then((r: AxiosResponse<User>) => {
+				res.status(r.status).json({ user: r.data, jwt: token });
 			})
 			.catch((err: AxiosError) => {
 				res.status(err.response?.status || 403).json({

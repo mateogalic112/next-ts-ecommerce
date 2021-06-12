@@ -15,6 +15,7 @@ import { AppBar, Toolbar, IconButton, Button, Container, Hidden } from '@materia
 import MenuIcon from '@material-ui/icons/Menu';
 
 import useUser from '../../hooks/useUser';
+import Cart from './Cart';
 
 const useStyles = makeStyles({
 	menuButton: {
@@ -90,6 +91,7 @@ const Header: React.FC = () => {
 							</Button>
 						)}
 						<CartIcon />
+						<Cart />
 					</Toolbar>
 				</Container>
 			</AppBar>

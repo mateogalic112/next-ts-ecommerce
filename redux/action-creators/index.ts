@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { Product } from '../../models/Order';
+import { Product } from '../../models/Product';
 import { CartActionType } from '../action-types';
 import { CartAction } from '../actions';
 
@@ -9,5 +9,7 @@ export const addToCart = (product: Product, quantity: number) => (dispatch: Disp
 		payload: { product, quantity },
 	});
 
-	localStorage.setItem('cartItems', JSON.stringify(getState().cartItems));
+	if (typeof window !== 'undefined') {
+		localStorage.setItem('cartItems', JSON.stringify(getState().cartItems));
+	}
 };

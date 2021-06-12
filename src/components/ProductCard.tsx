@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 
+import { useActions } from '../../hooks/useActions';
 import { Product } from '../../models/Product';
 
 import Rating from '@material-ui/lab/Rating';
@@ -32,7 +33,13 @@ interface SinglePostProps {
 const PostCard: React.FC<SinglePostProps> = ({ product }) => {
 	const classes = useStyles();
 
+	const { addToCart } = useActions();
+
 	const rating = getRating({ reviews: product.reviews });
+
+	const addProductToCart = () => {
+		addToCart(product, 1);
+	};
 
 	return (
 		<Grid item xs={12} sm={6} md={4}>
@@ -57,7 +64,7 @@ const PostCard: React.FC<SinglePostProps> = ({ product }) => {
 					</CardContent>
 				</CardActionArea>
 				<CardActions>
-					<Button size="small" color="primary" variant="contained">
+					<Button onClick={addProductToCart} size="small" color="primary" variant="contained">
 						Add to Cart
 					</Button>
 				</CardActions>

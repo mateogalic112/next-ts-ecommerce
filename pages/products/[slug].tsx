@@ -52,8 +52,6 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product }) => {
 
 	const { userData } = useUser();
 
-	console.log(product.id);
-
 	const handleBuy = async () => {
 		const stripe = await stripePromise;
 

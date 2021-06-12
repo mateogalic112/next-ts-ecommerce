@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Typography, Button } from '@material-ui/core';
+import { Container, Typography, Button, CircularProgress } from '@material-ui/core';
 
 import Layout from '../src/components/Layout';
 import Spacer from '../src/widgets/Spacer';
@@ -35,7 +35,7 @@ const SuccessPage: React.FC = () => {
 			<Container className={classes.container}>
 				<Typography variant="h1">Success!</Typography>
 				{isError && <p>Error occurred</p>}
-				{isLoading && <p>Loading...</p>}
+				{isLoading && <CircularProgress />}
 				{order && (
 					<>
 						<Typography gutterBottom variant="h3">

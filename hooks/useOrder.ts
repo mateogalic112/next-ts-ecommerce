@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { API_URL } from '../config';
 import { Order } from '../models/Order';
 

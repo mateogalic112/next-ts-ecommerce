@@ -7,7 +7,7 @@ import { User } from '../../models/User';
 
 import ModalComponent from './ModalComponent';
 
-import { Button, TextField } from '@material-ui/core';
+import { Button, CircularProgress, TextField } from '@material-ui/core';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import theme from '../../theme';
@@ -81,7 +81,7 @@ const Auth: React.FC<AuthProps> = ({ open, closeModal }) => {
 	return (
 		<ModalComponent open={open} handleClose={closeModal} title="Login" description="Login to see featured stuff">
 			{loading || isValidating ? (
-				<p>Loading</p>
+				<CircularProgress />
 			) : (
 				<form onSubmit={handleLoginDataSubmit} className={classes.form} noValidate autoComplete="off">
 					<TextField

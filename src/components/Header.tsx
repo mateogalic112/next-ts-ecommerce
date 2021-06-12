@@ -2,8 +2,11 @@ import React from 'react';
 import Link from 'next/link';
 
 import AnimatedDrawer from '../widgets/AnimatedDrawer';
+import CartIcon from '../widgets/CartIcon';
 import SearchBar from '../widgets/SearchBar';
+import Auth from './Auth';
 import NavigationList from './NavigationList';
+import UserPopover from './UserPopover';
 
 import theme from '../../theme';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,8 +15,6 @@ import { AppBar, Toolbar, IconButton, Button, Container, Hidden } from '@materia
 import MenuIcon from '@material-ui/icons/Menu';
 
 import useUser from '../../hooks/useUser';
-import UserPopover from './UserPopover';
-import Auth from './Auth';
 
 const useStyles = makeStyles({
 	menuButton: {
@@ -81,7 +82,6 @@ const Header: React.FC = () => {
 							<NavigationList />
 							<SearchBar />
 						</Hidden>
-
 						{userData?.user ? (
 							<UserPopover username={userData.user?.username} />
 						) : (
@@ -89,6 +89,7 @@ const Header: React.FC = () => {
 								Login
 							</Button>
 						)}
+						<CartIcon />
 					</Toolbar>
 				</Container>
 			</AppBar>

@@ -1,10 +1,10 @@
 export interface Order {
 	status: string;
-	products: Product[];
 	_id: string;
 	total: number;
 	checkout_session: string;
 	published_at: Date;
+	order_details: OrderDetail[];
 	createdAt: Date;
 	updatedAt: Date;
 	__v: number;
@@ -26,9 +26,17 @@ export interface Customer {
 	id: string;
 }
 
+export interface OrderDetail {
+	readonly _id?: string;
+	quantity: number;
+	readonly __v?: number;
+	product: Product;
+	readonly id?: string;
+}
+
 export interface Product {
 	gallery: Gallery[];
-	_id: ID;
+	_id: string;
 	name: string;
 	slug: string;
 	price: number;
@@ -42,12 +50,7 @@ export interface Product {
 	video: Cover;
 	category: string;
 	excerpt: string;
-	id: ID;
-}
-
-export enum ID {
-	The60Bf2B3Acc231A0690Deda14 = '60bf2b3acc231a0690deda14',
-	The60Bf2E25Cc231A0690Deda32 = '60bf2e25cc231a0690deda32',
+	id: string;
 }
 
 export interface Cover {
@@ -63,9 +66,9 @@ export interface Cover {
 	height: number | null;
 	url: string;
 	provider_metadata: ProviderMetadata;
-	formats?: Formats;
+	formats?: CoverFormats;
 	provider: string;
-	related: ID[];
+	related: string[];
 	createdAt: Date;
 	updatedAt: Date;
 	__v: number;
@@ -73,14 +76,11 @@ export interface Cover {
 	previewUrl?: string;
 }
 
-export interface Formats {
-	thumbnail: Large;
-	medium?: Large;
-	small?: Large;
-	large?: Large;
+export interface CoverFormats {
+	thumbnail: Thumbnail;
 }
 
-export interface Large {
+export interface Thumbnail {
 	name: string;
 	hash: string;
 	ext: EXT;
@@ -95,10 +95,12 @@ export interface Large {
 
 export enum EXT {
 	Jpg = '.jpg',
+	PNG = '.png',
 }
 
 export enum MIME {
 	ImageJPEG = 'image/jpeg',
+	ImagePNG = 'image/png',
 }
 
 export interface ProviderMetadata {
@@ -124,11 +126,18 @@ export interface Gallery {
 	height: number;
 	url: string;
 	provider_metadata: ProviderMetadata;
-	formats: Formats;
+	formats: GalleryFormats;
 	provider: string;
-	related: ID[];
+	related: string[];
 	createdAt: Date;
 	updatedAt: Date;
 	__v: number;
 	id: string;
+}
+
+export interface GalleryFormats {
+	thumbnail: Thumbnail;
+	large?: Thumbnail;
+	medium?: Thumbnail;
+	small?: Thumbnail;
 }

@@ -1,4 +1,6 @@
 import React from 'react';
+import { Provider } from 'react-redux';
+import { store } from '../redux';
 
 import Head from 'next/head';
 import { AppProps } from 'next/app';
@@ -25,7 +27,9 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
 			</Head>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
-				<Component {...pageProps} />
+				<Provider store={store}>
+					<Component {...pageProps} />
+				</Provider>
 			</ThemeProvider>
 		</>
 	);

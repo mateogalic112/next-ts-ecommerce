@@ -28,6 +28,8 @@ const SuccessPage: React.FC = () => {
 
 	const { order, isLoading, isError } = useOrder(session_id as string);
 
+	console.log(order);
+
 	return (
 		<Layout title="Success">
 			<Container className={classes.container}>
@@ -37,7 +39,10 @@ const SuccessPage: React.FC = () => {
 				{order && (
 					<>
 						<Typography gutterBottom variant="h3">
-							Thank you for your purchase
+							Thank you for your purchase!
+						</Typography>
+						<Typography gutterBottom variant="h5">
+							Order: {order._id}
 						</Typography>
 						<Link href="/" passHref>
 							<Button color="primary">Back to home</Button>

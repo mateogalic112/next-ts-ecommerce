@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 import { API_URL } from '../config';
 import { Order } from '../models/Order';
 
-const fetcher = (url: string, session_id: string): Promise<AxiosResponse<Order>> =>
+const fetcher = (url: string, session_id: string): Promise<Order> =>
 	axios
 		.post(url, {
 			checkout_session: session_id,

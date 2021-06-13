@@ -6,10 +6,7 @@ import ImageGallery from 'react-image-gallery';
 import Image from 'next/image';
 import { GetStaticPaths, GetStaticProps } from 'next';
 
-import { loadStripe } from '@stripe/stripe-js';
-
-import { API_URL, STRIPE_PK } from '../../config';
-import useUser from '../../hooks/useUser';
+import { API_URL } from '../../config';
 
 import { Product } from '../../models/Product';
 
@@ -17,8 +14,7 @@ import Layout from '../../src/components/Layout';
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Button, ButtonBase, Container, Grid, Paper, Typography } from '@material-ui/core';
-
-const stripePromise = loadStripe(STRIPE_PK);
+import ToCartButton from '../../src/widgets/ToCartButton';
 
 type SingleProductProps = {
 	product: Product;
@@ -36,9 +32,6 @@ const useStyles = makeStyles((theme: Theme) =>
 			width: '100%',
 			height: 'auto',
 		},
-		button: {
-			display: 'block',
-		},
 	})
 );
 
@@ -49,33 +42,6 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product }) => {
 		original: pic.url,
 		thumbnail: pic.formats?.thumbnail.url,
 	}));
-
-	const { userData } = useUser();
-
-	const handleBuy = async () => {
-		const stripe = await stripePromise;
-
-		if (!stripe) {
-			throw new Error('¨No stripe');
-		}
-		const response = await axios.post(
-			`${API_URL}/orders`,
-			{
-				product: { id: product.id },
-			},
-			{
-				headers: {
-					Authorization: `Bearer ${userData.jwt}`,
-				},
-			}
-		);
-
-		const session = await response.data;
-
-		await stripe.redirectToCheckout({
-			sessionId: session.id,
-		});
-	};
 
 	return (
 		<Layout title={product.name}>
@@ -108,14 +74,7 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product }) => {
 							<Typography gutterBottom variant="h5">
 								$19.00
 							</Typography>
-							<Button
-								onClick={handleBuy}
-								className={classes.button}
-								variant="contained"
-								color="secondary"
-							>
-								Buy
-							</Button>
+							<ToCartButton product={product} />
 						</Grid>
 					</Grid>
 				</Paper>

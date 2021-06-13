@@ -11,13 +11,11 @@ import CartIcon from '../widgets/CartIcon';
 import CartItem from './CartItem';
 import theme from '../../theme';
 import Spacer from '../widgets/Spacer';
+import BuyButton from '../widgets/BuyButton';
 
 const useStyles = makeStyles({
 	price: {
 		color: theme.palette.primary.main,
-	},
-	checkout: {
-		width: '100%',
 	},
 });
 
@@ -73,9 +71,7 @@ const Cart: React.FC = () => {
 							</span>
 						</Typography>
 						<Spacer marginTop=".5rem" />
-						<Button className={classes.checkout} variant="contained" color="secondary">
-							Checkout
-						</Button>
+						<BuyButton width="100%" cartItems={cartItems} />
 					</AnimatedDrawer>
 				</Container>
 			</Box>

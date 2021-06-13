@@ -1,9 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { useTypedSelector } from '../../hooks/useTypedSelector';
-
-import { useActions } from '../../hooks/useActions';
 import { Product } from '../../models/Product';
 
 import Rating from '@material-ui/lab/Rating';
@@ -11,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Card, CardActionArea, CardActions, CardContent, CardMedia, Typography, Button } from '@material-ui/core';
 import { getRating } from '../../helpers/getRatings';
 import theme from '../../theme';
+import ToCartButton from '../widgets/ToCartButton';
 
 const useStyles = makeStyles({
 	root: {
@@ -35,15 +33,7 @@ interface SinglePostProps {
 const PostCard: React.FC<SinglePostProps> = ({ product }) => {
 	const classes = useStyles();
 
-	const { cartItems } = useTypedSelector((state) => state.cart);
-	const inCart = cartItems.find((item) => item.product.name === product.name);
-	const { addToCart } = useActions();
-
 	const rating = getRating({ reviews: product.reviews });
-
-	const addProductToCart = () => {
-		addToCart(product, 1);
-	};
 
 	return (
 		<Grid item xs={12} sm={6} md={4}>
@@ -68,15 +58,7 @@ const PostCard: React.FC<SinglePostProps> = ({ product }) => {
 					</CardContent>
 				</CardActionArea>
 				<CardActions>
-					{inCart ? (
-						<Button disabled size="small" variant="contained">
-							In Cart
-						</Button>
-					) : (
-						<Button onClick={addProductToCart} size="small" color="primary" variant="contained">
-							Add to Cart
-						</Button>
-					)}
+					<ToCartButton product={product} />
 				</CardActions>
 			</Card>
 		</Grid>

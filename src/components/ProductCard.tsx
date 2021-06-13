@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 
+import { useTypedSelector } from '../../hooks/useTypedSelector';
+
 import { useActions } from '../../hooks/useActions';
 import { Product } from '../../models/Product';
 
@@ -33,6 +35,8 @@ interface SinglePostProps {
 const PostCard: React.FC<SinglePostProps> = ({ product }) => {
 	const classes = useStyles();
 
+	const { cartItems } = useTypedSelector((state) => state.cart);
+	const inCart = cartItems.find((item) => item.product.name === product.name);
 	const { addToCart } = useActions();
 
 	const rating = getRating({ reviews: product.reviews });
@@ -64,9 +68,15 @@ const PostCard: React.FC<SinglePostProps> = ({ product }) => {
 					</CardContent>
 				</CardActionArea>
 				<CardActions>
-					<Button onClick={addProductToCart} size="small" color="primary" variant="contained">
-						Add to Cart
-					</Button>
+					{inCart ? (
+						<Button disabled size="small" variant="contained">
+							In Cart
+						</Button>
+					) : (
+						<Button onClick={addProductToCart} size="small" color="primary" variant="contained">
+							Add to Cart
+						</Button>
+					)}
 				</CardActions>
 			</Card>
 		</Grid>

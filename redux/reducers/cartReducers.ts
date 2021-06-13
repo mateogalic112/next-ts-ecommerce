@@ -17,10 +17,19 @@ const cartReducer = (state: CartState = initialState, action: CartAction): CartS
 
 	switch (action.type) {
 		case CartActionType.CART_ADD_ITEM:
-			return {
-				...state,
-				cartItems: [...state.cartItems, item],
-			};
+			const itemInCart = state.cartItems.find((x) => x.product.name === item.product.name);
+
+			if (!!itemInCart) {
+				return {
+					...state,
+					cartItems: state.cartItems.map((x) => (x.product.name === itemInCart.product.name ? item : x)),
+				};
+			} else {
+				return {
+					...state,
+					cartItems: [...state.cartItems, item],
+				};
+			}
 		case CartActionType.CART_REMOVE_ITEM:
 			return {
 				...state,

@@ -2,12 +2,28 @@ import React from 'react';
 
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 
-import { Box, Container, IconButton, Typography } from '@material-ui/core';
+import { Box, Container, IconButton, Divider, Typography, Button } from '@material-ui/core';
+
+import { makeStyles } from '@material-ui/core/styles';
 
 import AnimatedDrawer from '../widgets/AnimatedDrawer';
 import CartIcon from '../widgets/CartIcon';
+import CartItem from './CartItem';
+import theme from '../../theme';
+import Spacer from '../widgets/Spacer';
+
+const useStyles = makeStyles({
+	price: {
+		color: theme.palette.primary.main,
+	},
+	checkout: {
+		width: '100%',
+	},
+});
 
 const Cart: React.FC = () => {
+	const classes = useStyles();
+
 	const { cartItems } = useTypedSelector((state) => state.cart);
 
 	// Cart drawer
@@ -32,9 +48,34 @@ const Cart: React.FC = () => {
 			<Box component="div" py={4}>
 				<Container>
 					<AnimatedDrawer anchor="right" isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer}>
+						<Typography variant="h6" component="h4">
+							Items:{' '}
+							<span className={classes.price}>
+								{cartItems.reduce((acc, item) => acc + item.quantity, 0)}
+							</span>
+						</Typography>
+						<Spacer marginTop=".5rem" />
 						{cartItems.map((item) => (
-							<li key={item.id}>item.product.name</li>
+							<React.Fragment key={item.id}>
+								<CartItem {...item} />
+								<Divider light />
+							</React.Fragment>
 						))}
+						<Divider light />
+						<Spacer marginTop="1rem" />
+						<Typography variant="h5" component="h3">
+							Total:{' '}
+							<span className={classes.price}>
+								$
+								{cartItems
+									.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+									.toFixed(2)}
+							</span>
+						</Typography>
+						<Spacer marginTop=".5rem" />
+						<Button className={classes.checkout} variant="contained" color="secondary">
+							Checkout
+						</Button>
 					</AnimatedDrawer>
 				</Container>
 			</Box>

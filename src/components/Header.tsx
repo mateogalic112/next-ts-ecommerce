@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 
 import AnimatedDrawer from '../widgets/AnimatedDrawer';
-import CartIcon from '../widgets/CartIcon';
 import SearchBar from '../widgets/SearchBar';
 import Auth from './Auth';
 import NavigationList from './NavigationList';
@@ -16,6 +15,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 
 import useUser from '../../hooks/useUser';
 import Cart from './Cart';
+import SiteNavigation from './SiteNavigation';
 
 const useStyles = makeStyles({
 	menuButton: {
@@ -46,8 +46,8 @@ const Header: React.FC = () => {
 	const { userData } = useUser();
 
 	// Side drawer
-	const [isDrawerOpen, setIsDrawerOpen] = React.useState<boolean>(false);
-	const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+	const [isNavDrawerOpen, setIsNavDrawerOpen] = React.useState<boolean>(false);
+	const toggleNavDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
 		if (
 			event &&
 			event.type === 'keydown' &&
@@ -56,7 +56,7 @@ const Header: React.FC = () => {
 			return;
 		}
 
-		setIsDrawerOpen(open);
+		setIsNavDrawerOpen(open);
 	};
 
 	return (
@@ -66,7 +66,7 @@ const Header: React.FC = () => {
 					<Toolbar disableGutters>
 						<div className={classes.drawerDiv}>
 							<IconButton
-								onClick={toggleDrawer(true)}
+								onClick={toggleNavDrawer(true)}
 								edge="start"
 								className={classes.menuButton}
 								color="inherit"
@@ -74,7 +74,9 @@ const Header: React.FC = () => {
 							>
 								<MenuIcon />
 							</IconButton>
-							<AnimatedDrawer isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
+							<AnimatedDrawer anchor="left" isDrawerOpen={isNavDrawerOpen} toggleDrawer={toggleNavDrawer}>
+								<SiteNavigation />
+							</AnimatedDrawer>
 						</div>
 						<Link href="/">
 							<a className={classes.title}>E-commerce</a>
@@ -90,7 +92,6 @@ const Header: React.FC = () => {
 								Login
 							</Button>
 						)}
-						<CartIcon />
 						<Cart />
 					</Toolbar>
 				</Container>

@@ -26,23 +26,21 @@ const SuccessPage: React.FC = () => {
 	const router = useRouter();
 	const { session_id } = router.query;
 
-	const { order, isLoading, isError } = useOrder(session_id as string);
-
-	console.log(order);
+	const { data, loading, error } = useOrder(session_id as string);
 
 	return (
 		<Layout title="Success">
 			<Container className={classes.container}>
-				<Typography variant="h1">Success!</Typography>
-				{isError && <p>Error occurred</p>}
-				{isLoading && <CircularProgress />}
-				{order && (
+				{error && <p>{error}</p>}
+				{loading && <CircularProgress />}
+				{data?.order && (
 					<>
+						<Typography variant="h1">Success!</Typography>
 						<Typography gutterBottom variant="h3">
 							Thank you for your purchase!
 						</Typography>
 						<Typography gutterBottom variant="h5">
-							Order: {order._id}
+							Order: {data?.order?._id}
 						</Typography>
 						<Link href="/" passHref>
 							<Button color="primary">Back to home</Button>

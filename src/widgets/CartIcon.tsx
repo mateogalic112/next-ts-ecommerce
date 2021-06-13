@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 
-import { IconButton, Badge } from '@material-ui/core';
+import { Badge } from '@material-ui/core';
 import { Theme, withStyles, createStyles } from '@material-ui/core/styles';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
@@ -21,10 +21,8 @@ export default function CartIcon() {
 	const { cartItems } = useTypedSelector((state) => state.cart);
 
 	return (
-		<IconButton aria-label="cart">
-			<StyledBadge badgeContent={cartItems.length} color="secondary">
-				<ShoppingCartIcon />
-			</StyledBadge>
-		</IconButton>
+		<StyledBadge badgeContent={cartItems.length} color="secondary">
+			<ShoppingCartIcon />
+		</StyledBadge>
 	);
 }

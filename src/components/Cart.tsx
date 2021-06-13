@@ -54,7 +54,7 @@ const Cart: React.FC = () => {
 						</Typography>
 						<Spacer marginTop=".5rem" />
 						{cartItems.map((item) => (
-							<React.Fragment key={item.id}>
+							<React.Fragment key={item.product.name}>
 								<CartItem {...item} />
 								<Divider light />
 							</React.Fragment>

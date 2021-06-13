@@ -1,23 +1,35 @@
-import useSWR from 'swr';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_URL } from '../config';
+import { NEXT_URL } from '../config';
 import { Order } from '../models/Order';
 
-const fetcher = (url: string, session_id: string): Promise<Order> =>
-	axios
-		.post(url, {
-			checkout_session: session_id,
-		})
-		.then((res) => res.data);
-
 const useOrder = (session_id: string) => {
-	const { data, error } = useSWR([`${API_URL}/orders/confirm`, session_id], fetcher);
+	const [data, setData] = useState<{ order: Order } | null>(null);
+	const [error, setError] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false);
 
-	return {
-		order: data,
-		isLoading: !error && !data,
-		isError: error,
-	};
+	useEffect(() => {
+		const fetchOrder = async (): Promise<void> => {
+			setLoading(true);
+			await axios
+				.post(`${NEXT_URL}/api/order/confirm`, {
+					checkout_session: session_id,
+				})
+				.then((orderResponse) => {
+					setData(orderResponse.data);
+				})
+				.catch((err) => {
+					console.log(err);
+
+					setError(err.message);
+				});
+			setLoading(false);
+		};
+
+		fetchOrder();
+	}, [session_id]);
+
+	return { data, loading, error };
 };
 
 export default useOrder;

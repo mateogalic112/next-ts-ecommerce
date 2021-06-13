@@ -1,5 +1,5 @@
 import React from 'react';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
 import { API_URL, STRIPE_PK } from '../../config';
 import useUser from '../../hooks/useUser';

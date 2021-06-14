@@ -19,26 +19,28 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 		const { checkout_session } = req.body;
 
-		await axios
-			.post<Order | AxiosError>(
-				`${API_URL}/orders/confirm`,
-				{
-					checkout_session,
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
+		if (checkout_session) {
+			await axios
+				.post<Order | AxiosError>(
+					`${API_URL}/orders/confirm`,
+					{
+						checkout_session,
 					},
-				}
-			)
-			.then((r: AxiosResponse<Order>) => {
-				res.status(r.status).json({ order: r.data });
-			})
-			.catch((err: AxiosError) => {
-				res.status(err.response?.status || 404).json({
-					message: err.response?.data,
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
+				)
+				.then((r: AxiosResponse<Order>) => {
+					res.status(r.status).json({ order: r.data });
+				})
+				.catch((err: AxiosError) => {
+					res.status(err.response?.status || 404).json({
+						message: err.response?.data,
+					});
 				});
-			});
+		}
 	} else {
 		res.setHeader('Allow', ['POST']);
 		res.status(405).json({ message: `Method ${req.method} not allowed` });

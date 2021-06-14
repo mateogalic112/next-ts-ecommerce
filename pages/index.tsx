@@ -1,9 +1,11 @@
+import React, { useState } from 'react';
+
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
 
 import { API_URL } from '../config';
 
-import { Container, Grid, Button, Typography } from '@material-ui/core';
+import { Container, Button, Typography } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 import Layout from '../src/components/Layout';
@@ -13,6 +15,8 @@ import Showcase from '../src/components/Showcase';
 
 import { Product } from '../models/Product';
 import { ShowcaseSingle } from '../models/ShowcaseSIngle';
+import usePagination from '../hooks/usePagination';
+import PaginatedList from '../src/components/PaginatedList';
 
 interface HomePageProps {
 	products: Product[];
@@ -20,6 +24,12 @@ interface HomePageProps {
 }
 
 const HomePage: React.FC<HomePageProps> = ({ products, children, showcase }) => {
+	const [productsPage, setProductsPage] = useState(1);
+	const { data, lastPage, loading, error } = usePagination('products', productsPage);
+
+	// cache next page result
+	usePagination('products', productsPage + 1);
+
 	return (
 		<Layout>
 			<Showcase showcase={showcase} />
@@ -31,11 +41,17 @@ const HomePage: React.FC<HomePageProps> = ({ products, children, showcase }) => 
 				<Typography gutterBottom variant="h4" component="h3">
 					New Products
 				</Typography>
-				<Grid container spacing={5}>
-					{products.map((product) => (
-						<ProductCard key={product.slug} product={product} />
-					))}
-				</Grid>
+				{loading ? (
+					<div>Loading...</div>
+				) : (
+					<PaginatedList
+						items={data}
+						render={(product: Product) => <ProductCard key={product.id} product={product} />}
+						lastPage={lastPage}
+						page={productsPage}
+						setPage={setProductsPage}
+					/>
+				)}
 				<Spacer />
 				<Link href="/posts">
 					<Button variant="contained" color="primary" endIcon={<ArrowForwardIosIcon />}>

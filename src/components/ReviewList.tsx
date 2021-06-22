@@ -17,7 +17,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
 
 			<Box>
 				{reviews.map((review) => (
-					<UserReview review={review} />
+					<UserReview key={review._id} review={review} />
 				))}
 			</Box>
 		</Container>

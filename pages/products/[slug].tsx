@@ -20,6 +20,8 @@ import ReviewList from '../../src/components/ReviewList';
 import { Review } from '../../models/Review';
 
 import qs from 'qs';
+import useUser from '../../hooks/useUser';
+import useUserReview from '../../hooks/useUserReview';
 
 type SingleProductProps = {
 	product: Product;
@@ -49,7 +51,7 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product, reviews }) => {
 		thumbnail: pic.formats?.thumbnail.url,
 	}));
 
-	console.log(reviews);
+	const { canReview } = useUserReview(product._id, reviews);
 
 	return (
 		<Layout title={product.name}>
@@ -91,11 +93,13 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product, reviews }) => {
 						<ReviewList reviews={reviews} />
 					</Grid>
 				</Grid>
-				<Grid container spacing={2}>
-					<Grid item xs={12} sm={6}>
-						<ReviewForm />
+				{canReview && (
+					<Grid container spacing={2}>
+						<Grid item xs={12} sm={6}>
+							<ReviewForm />
+						</Grid>
 					</Grid>
-				</Grid>
+				)}
 				<ImageGallery showPlayButton={false} items={images} />;
 			</Container>
 		</Layout>

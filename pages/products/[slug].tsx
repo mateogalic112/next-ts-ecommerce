@@ -15,9 +15,15 @@ import Layout from '../../src/components/Layout';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Button, ButtonBase, Container, Grid, Paper, Typography } from '@material-ui/core';
 import ToCartButton from '../../src/widgets/ToCartButton';
+import ReviewForm from '../../src/components/ReviewForm';
+import ReviewList from '../../src/components/ReviewList';
+import { Review } from '../../models/Review';
+
+import qs from 'qs';
 
 type SingleProductProps = {
 	product: Product;
+	reviews: Review[];
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -35,13 +41,15 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-const SingleProduct: React.FC<SingleProductProps> = ({ product }) => {
+const SingleProduct: React.FC<SingleProductProps> = ({ product, reviews }) => {
 	const classes = useStyles();
 
 	const images = product.gallery.map((pic) => ({
 		original: pic.url,
 		thumbnail: pic.formats?.thumbnail.url,
 	}));
+
+	console.log(reviews);
 
 	return (
 		<Layout title={product.name}>
@@ -78,6 +86,16 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product }) => {
 						</Grid>
 					</Grid>
 				</Paper>
+				<Grid container spacing={2}>
+					<Grid item xs={12} sm={6}>
+						<ReviewList reviews={reviews} />
+					</Grid>
+				</Grid>
+				<Grid container spacing={2}>
+					<Grid item xs={12} sm={6}>
+						<ReviewForm />
+					</Grid>
+				</Grid>
 				<ImageGallery showPlayButton={false} items={images} />;
 			</Container>
 		</Layout>
@@ -98,15 +116,43 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-	const res: AxiosResponse<Product[]> = await axios.get(`${API_URL}/products`, {
-		params: {
-			slug: params?.slug,
-		},
+	const productsResponse: Product[] = await axios
+		.get(`${API_URL}/products`, {
+			params: {
+				slug: params?.slug,
+			},
+		})
+		.then((res) => res.data);
+
+	const query = qs.stringify({
+		_where: [{ 'product.slug': params?.slug }],
 	});
+
+	const reviewsResponse: Review[] = await axios.get(`${API_URL}/reviews?${query}`).then((res) => res.data);
+
+	const fetchProductData = async (): Promise<{
+		products: Product[];
+		reviews: Review[];
+	}> => {
+		try {
+			const [products, reviews] = await Promise.all([productsResponse, reviewsResponse]);
+			return {
+				products,
+				reviews,
+			};
+		} catch (err) {
+			throw new Error('Failed to fetch data');
+		}
+	};
+
+	const { products, reviews } = await fetchProductData();
+
+	console.log(reviews);
 
 	return {
 		props: {
-			product: res.data[0],
+			product: products[0],
+			reviews,
 		},
 	};
 };

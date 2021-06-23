@@ -25,7 +25,7 @@ interface HomePageProps {
 
 const HomePage: React.FC<HomePageProps> = ({ products, children, showcase }) => {
 	const [productsPage, setProductsPage] = useState(1);
-	const { data, lastPage, loading, error } = usePagination('products', productsPage);
+	const { data, lastPage, loading, error } = usePagination('products', productsPage, 3, products);
 
 	// cache next page result
 	usePagination('products', productsPage + 1);

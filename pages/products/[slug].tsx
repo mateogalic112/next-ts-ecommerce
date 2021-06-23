@@ -56,7 +56,9 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product, reviews }) => {
 		_where: [{ 'product.slug': product?.slug }],
 	});
 
-	const { data: productReviews } = useSWR(`${API_URL}/reviews?${query}`, fetcher, { initialData: reviews });
+	const { data: productReviews, isValidating } = useSWR(`${API_URL}/reviews?${query}`, fetcher, {
+		initialData: reviews,
+	});
 
 	const { canReview } = useUserReview(product._id, productReviews);
 
@@ -103,7 +105,12 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product, reviews }) => {
 				{canReview && (
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6}>
-							<ReviewForm reviews={reviews} product={product._id} slug={product.slug} />
+							<ReviewForm
+								isValidating={isValidating}
+								reviews={reviews}
+								product={product._id}
+								slug={product.slug}
+							/>
 						</Grid>
 					</Grid>
 				)}

@@ -47,9 +47,10 @@ type ReviewFormProps = {
 	product: string;
 	slug: string;
 	reviews: Review[];
+	isValidating: boolean;
 };
 
-const ReviewForm: React.FC<ReviewFormProps> = ({ product, slug, reviews }) => {
+const ReviewForm: React.FC<ReviewFormProps> = ({ product, slug, reviews, isValidating }) => {
 	const [ratingValue, setRatingValue] = React.useState(0);
 
 	const { userData } = useUser();
@@ -80,8 +81,8 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ product, slug, reviews }) => {
 					],
 					false
 				);
-				resetForm({});
 				await createReview(values.review, ratingValue, userData.user._id, product);
+				resetForm({});
 				setRatingValue(0);
 				setStatus({ success: true });
 				mutate(`${API_URL}/reviews?${query}`);
@@ -92,11 +93,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ product, slug, reviews }) => {
 		},
 	});
 
-	React.useEffect(() => {
-		console.log(formik.status);
-	}, [formik.status]);
-
-	if (formik.isSubmitting) return <h1>Submitting...</h1>;
+	if (formik.isSubmitting || isValidating) return <h1>Submitting...</h1>;
 
 	return (
 		<Container>

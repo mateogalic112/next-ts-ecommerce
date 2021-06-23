@@ -1,30 +1,71 @@
 import React from 'react';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { TextField, Button, Box, Container } from '@material-ui/core';
+
+import axios from 'axios';
+import { NEXT_URL } from '../../config';
+
+import { TextField, Button, Container } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
 import Spacer from '../widgets/Spacer';
 
+import { Review } from '../../models/Review';
+import useUser from '../../hooks/useUser';
+
 const validationSchema = yup.object({
 	review: yup.string().min(10, 'Minimun 10 letters required').required('Review is required'),
-	rating: yup.number().max(5, 'Max 5 stars').min(1, 'Min 1 star').required('Rating is required'),
 });
 
-const ReviewForm: React.FC = () => {
+const createReview = async (
+	content: string,
+	rating: number,
+	author: string,
+	product: string
+): Promise<Review | void> => {
+	if (rating === 0) {
+		return;
+	}
+	return await axios
+		.post(`${NEXT_URL}/api/review/create`, {
+			content,
+			rating,
+			author,
+			product,
+		})
+		.then((response) => {
+			return response.data as Review;
+		})
+		.catch((err) => {
+			console.log('req', err);
+		});
+};
+
+type ReviewFormProps = {
+	product: string;
+};
+
+const ReviewForm: React.FC<ReviewFormProps> = ({ product }) => {
+	const [ratingValue, setRatingValue] = React.useState(0);
+
+	const { userData } = useUser();
+
 	const formik = useFormik({
 		initialValues: {
 			review: '',
-			rating: 0,
 		},
 		validationSchema: validationSchema,
-		onSubmit: (values) => {
-			alert(JSON.stringify(values, null, 2));
+		onSubmit: async (values) => {
+			formik.setSubmitting(true);
+			await createReview(values.review, ratingValue, userData.user._id, product);
+			formik.setSubmitting(false);
 		},
 	});
 
+	if (formik.isSubmitting) return <h1>Submitting...</h1>;
+
 	return (
 		<Container>
-			<form>
+			<form onSubmit={formik.handleSubmit}>
 				<TextField
 					fullWidth
 					multiline
@@ -41,12 +82,12 @@ const ReviewForm: React.FC = () => {
 				<Spacer marginTop="1rem" />
 
 				<Rating
-					defaultValue={formik.values.rating}
+					defaultValue={0}
 					getLabelText={(_) => 'Stars'}
 					precision={0.5}
 					name="rating"
-					value={formik.values.rating}
-					onChange={formik.handleChange}
+					value={ratingValue}
+					onChange={(_, value) => setRatingValue(value as number)}
 				/>
 
 				<Spacer marginTop="1rem" />

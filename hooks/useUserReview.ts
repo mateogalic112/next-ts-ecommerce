@@ -17,9 +17,6 @@ const useUserReview = (productId: string, reviews: Review[]) => {
 	);
 	const hasReviewed = reviews.some((review) => review.author._id === userData?.user._id);
 
-	console.log('hasBoughtProduct', hasBoughtProduct);
-	console.log('hasReviewed', hasReviewed);
-
 	const loading = !error && !data;
 	const canReview = hasBoughtProduct && !hasReviewed;
 

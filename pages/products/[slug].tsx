@@ -96,7 +96,7 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product, reviews }) => {
 				{canReview && (
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6}>
-							<ReviewForm />
+							<ReviewForm product={product._id} />
 						</Grid>
 					</Grid>
 				)}

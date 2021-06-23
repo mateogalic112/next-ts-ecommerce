@@ -20,8 +20,9 @@ import ReviewList from '../../src/components/ReviewList';
 import { Review } from '../../models/Review';
 
 import qs from 'qs';
-import useUser from '../../hooks/useUser';
 import useUserReview from '../../hooks/useUserReview';
+import useSWR from 'swr';
+import fetcher from '../../helpers/fetcher';
 
 type SingleProductProps = {
 	product: Product;
@@ -51,7 +52,13 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product, reviews }) => {
 		thumbnail: pic.formats?.thumbnail.url,
 	}));
 
-	const { canReview } = useUserReview(product._id, reviews);
+	const query = qs.stringify({
+		_where: [{ 'product.slug': product?.slug }],
+	});
+
+	const { data: productReviews } = useSWR(`${API_URL}/reviews?${query}`, fetcher, { initialData: reviews });
+
+	const { canReview } = useUserReview(product._id, productReviews);
 
 	return (
 		<Layout title={product.name}>
@@ -90,13 +97,13 @@ const SingleProduct: React.FC<SingleProductProps> = ({ product, reviews }) => {
 				</Paper>
 				<Grid container spacing={2}>
 					<Grid item xs={12} sm={6}>
-						<ReviewList reviews={reviews} />
+						<ReviewList reviews={productReviews} />
 					</Grid>
 				</Grid>
 				{canReview && (
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6}>
-							<ReviewForm product={product._id} />
+							<ReviewForm reviews={reviews} product={product._id} slug={product.slug} />
 						</Grid>
 					</Grid>
 				)}
